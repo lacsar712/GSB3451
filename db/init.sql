@@ -130,6 +130,18 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (payee_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Search History Table
+CREATE TABLE IF NOT EXISTS search_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    keyword VARCHAR(255) NOT NULL,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_create_time (create_time)
+) ENGINE=InnoDB;
+
 -- Seed Data
 INSERT INTO users (username, password, email, phone, role, avatar) VALUES
 ('admin', '$2a$12$dyHGfnq9tgSMUoyg0QGJ5e2EHsZZf9zYGaLoX8eWEJKU1YLK9Kmxq', 'admin@example.com', '13800138000', 'ADMIN', 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin'),
