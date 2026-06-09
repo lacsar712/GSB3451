@@ -1,0 +1,33 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+
+spring:
+  application:
+    name: house-trading
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/house_trading?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+  main:
+    allow-circular-references: true
+
+mybatis-plus:
+  type-aliases-package: com.example.housetrading.entity
+  configuration:
+    map-underline-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# JWT Secret
+jwt:
+  secret: 9a4f2c8d3b1e5f0c9a8b7d6e5f4c3b2a1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d
+  expiration: 86400000 # 24 hours

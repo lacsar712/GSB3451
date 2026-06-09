@@ -1,0 +1,72 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: house-trading-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: house_trading
+      MYSQL_ROOT_PASSWORD: root
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "33060:3306"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - house-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: house-trading-redis
+    restart: always
+    ports:
+      - "63790:6379"
+    networks:
+      - house-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: house-trading-backend
+    restart: always
+    ports:
+      - "8207:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/house_trading?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - house-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: house-trading-frontend
+    restart: always
+    ports:
+      - "3207:80"
+    depends_on:
+      - backend
+    networks:
+      - house-network
+
+networks:
+  house-network:
+    driver: bridge
+
+volumes:
+  db_data:
