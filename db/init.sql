@@ -104,6 +104,15 @@ CREATE TABLE IF NOT EXISTS announcements (
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Search History Table
+CREATE TABLE IF NOT EXISTS search_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    keyword VARCHAR(200) NOT NULL,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- Password Reset Token Table
 CREATE TABLE IF NOT EXISTS password_reset_tokens (
     id INT AUTO_INCREMENT PRIMARY KEY,
